@@ -541,7 +541,7 @@ def research_window():
             # pdf image
             if pim := state.msgs[round]["load_pdf_screenshot"]:
                 for i in range(min(2, len(pim))):
-                    st.image(pim[i].content, use_container_width=True)
+                    st.image(pim[i].content, width='stretch')
 
             # Hypothesis
             if hg := state.msgs[round]["hypothesis generation"]:
@@ -562,7 +562,7 @@ def research_window():
             with c1:
                 if pim := state.msgs[0]["pdf_image"]:
                     for i in range(len(pim)):
-                        st.image(pim[i].content, use_container_width=True)
+                        st.image(pim[i].content, width='stretch')
 
             # loaded model exp
             with c2:
@@ -756,24 +756,24 @@ with st.sidebar:
 
     c1, c2 = st.columns([1, 1], vertical_alignment="center")
     with c1:
-        if st.button(":green[**All Loops**]", use_container_width=True):
+        if st.button(":green[**All Loops**]", width='stretch'):
             if not state.fs:
                 refresh()
             get_msgs_until(lambda m: False)
-        if st.button("**Reset**", use_container_width=True):
+        if st.button("**Reset**", width='stretch'):
             refresh(same_trace=True)
     with c2:
-        if st.button(":green[Next Loop]", use_container_width=True):
+        if st.button(":green[Next Loop]", width='stretch'):
             if not state.fs:
                 refresh()
             get_msgs_until(lambda m: "feedback" in m.tag and "evolving feedback" not in m.tag)
 
-        if st.button("Next Step", use_container_width=True):
+        if st.button("Next Step", width='stretch'):
             if not state.fs:
                 refresh()
             get_msgs_until(lambda m: "evolving feedback" in m.tag)
 
-    with st.popover(":orange[**Config⚙️**]", use_container_width=True):
+    with st.popover(":orange[**Config⚙️**]", width='stretch'):
         st.multiselect("excluded log tags", ["llm_messages"], ["llm_messages"], key="excluded_tags")
         st.multiselect("excluded log types", ["str", "dict", "list"], ["str"], key="excluded_types")
 
@@ -781,7 +781,7 @@ with st.sidebar:
         debug = st.toggle("debug", value=False)
 
         if debug:
-            if st.button("Single Step Run", use_container_width=True):
+            if st.button("Single Step Run", width='stretch'):
                 get_msgs_until()
     else:
         debug = False
@@ -836,7 +836,7 @@ with st.container():
     image_c, scen_c = st.columns([3, 3], vertical_alignment="center")
     with image_c:
         img_path = rfiles("rdagent.log.ui").joinpath("flow.png")
-        st.image(str(img_path), use_container_width=True)
+    st.image(str(img_path), width='stretch')
     with scen_c:
         st.header("Scenario Description📖", divider="violet", anchor="_scenario")
         if state.scenario is not None:

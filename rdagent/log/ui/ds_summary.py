@@ -9,7 +9,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 from streamlit import session_state as state
-
+ 
 from rdagent.log.ui.utils import (
     ALL,
     HIGH,
@@ -191,7 +191,7 @@ def all_summarize_win():
             font=dict(size=12, color="#333333"),
         )
 
-        st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
     # write curve
     st.subheader("Curves", divider="rainbow")

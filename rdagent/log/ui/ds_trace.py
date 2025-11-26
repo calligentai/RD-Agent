@@ -203,14 +203,14 @@ def workspace_win(workspace, cmp_workspace=None, cmp_name="last code."):
     if len(show_files) > 0:
         if cmp_workspace:
             diff = generate_diff_from_dict(cmp_workspace.file_dict, show_files, "main.py")
-            with st.popover(f":violet[**Diff with {cmp_name}**]", use_container_width=True, icon="🔍"):
+            with st.popover(f":violet[**Diff with {cmp_name}**]", width='stretch', icon="🔍"):
                 st.code("".join(diff), language="diff", wrap_lines=True, line_numbers=True)
 
         rtime = workspace.running_info.running_time
         time_str = timedelta_to_str(timedelta(seconds=rtime) if rtime else None) or "00:00:00"
 
         with st.popover(
-            f"⏱️{time_str} 📂Files in :blue[{replace_ep_path(workspace.workspace_path)}]", use_container_width=True
+            f"⏱️{time_str} 📂Files in :blue[{replace_ep_path(workspace.workspace_path)}]", width='stretch'
         ):
             st.write(replace_ep_path(workspace.workspace_path))
             code_tabs = st.tabs(show_files.keys())
@@ -283,7 +283,7 @@ def llm_log_win(llm_d: list):
             tpl = d["obj"]["template"]
             cxt = d["obj"]["context"]
             rd = d["obj"]["rendered"]
-            with st.popover(highlight_prompts_uri(uri), icon="⚙️", use_container_width=True):
+            with st.popover(highlight_prompts_uri(uri), icon="⚙️", width='stretch'):
                 t1, t2, t3 = st.tabs([":green[**Rendered**]", ":blue[**Template**]", ":orange[**Context**]"])
                 with t1:
                     show_text(rd)
@@ -948,7 +948,7 @@ def summarize_win():
 
         # timeline figure
         if state.times:
-            with st.popover("Timeline", icon="⏱️", use_container_width=True):
+            with st.popover("Timeline", icon="⏱️", width='stretch'):
                 st.plotly_chart(timeline_figure(state.times))
 
         # scores curve
@@ -971,8 +971,8 @@ def summarize_win():
         vscores["test"] = test_scores
         vscores.index = [f"L{i}" for i in vscores.index]
         vscores.columns.name = metric_name
-        with st.popover("Scores Curve", icon="📈", use_container_width=True):
-            st.plotly_chart(curve_figure(vscores))
+    with st.popover("Scores Curve", icon="📈", width='stretch'):
+        st.plotly_chart(curve_figure(vscores))
 
         st.markdown("### Hypotheses Table")
         hypotheses_df = df.iloc[:, :8].copy()
@@ -1035,8 +1035,8 @@ def summarize_win():
         comp_df["Valid Rate"] = comp_df["Valid Rate"].apply(lambda x: f"{x}%")
         comp_df["Success Rate"] = comp_df["Success Rate"].apply(lambda x: f"{x}%")
         comp_df.loc["Total", "Avg e-loops(c)"] = round(df["e-loops(c)"].mean(), 2)
-        with st2.popover("Component Statistics", icon="📊", use_container_width=True):
-            st.dataframe(comp_df)
+    with st2.popover("Component Statistics", icon="📊", width='stretch'):
+        st.dataframe(comp_df)
 
         # component time statistics
         time_df = df.loc[:, ["Component", "Time", "Exp Gen", "Coding", "Running"]]
@@ -1055,14 +1055,14 @@ def summarize_win():
         time_stat_df.loc[:, "Running(%)"] = (time_stat_df["Running"] / time_stat_df["Time"] * 100).round(2)
         for col in ["Time", "Exp Gen", "Coding", "Running"]:
             time_stat_df[col] = time_stat_df[col].map(timedelta_to_str)
-        with st1.popover("Time Statistics", icon="⏱️", use_container_width=True):
-            st.dataframe(time_stat_df)
+    with st1.popover("Time Statistics", icon="⏱️", width='stretch'):
+        st.dataframe(time_stat_df)
 
         # COST curve
         costs = df["COST($)"].astype(float)
         costs.index = [f"L{i}" for i in costs.index]
         cumulative_costs = costs.cumsum()
-        with st.popover("COST Curve", icon="💰", use_container_width=True):
+    with st.popover("COST Curve", icon="💰", width='stretch'):
             fig = px.line(
                 x=costs.index,
                 y=[costs.values, cumulative_costs.values],
