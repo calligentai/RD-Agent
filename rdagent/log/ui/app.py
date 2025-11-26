@@ -15,7 +15,6 @@ from plotly.subplots import make_subplots
 from streamlit import session_state as state
 from streamlit_theme import st_theme
 
-from rdagent.components.coder.factor_coder.evaluators import FactorSingleFeedback
 from rdagent.components.coder.factor_coder.factor import FactorFBWorkspace, FactorTask
 from rdagent.components.coder.model_coder.evaluators import ModelSingleFeedback
 from rdagent.components.coder.model_coder.model import ModelFBWorkspace, ModelTask
@@ -289,39 +288,26 @@ def refresh(same_trace: bool = False):
     state.alpha_baseline_metrics = None
 
 
-def evolving_feedback_window(wsf: FactorSingleFeedback | ModelSingleFeedback):
-    if isinstance(wsf, FactorSingleFeedback):
-        ffc, efc, cfc, vfc = st.tabs(
-            ["**Final Feedback🏁**", "Execution Feedback🖥️", "Code Feedback📄", "Value Feedback🔢"]
-        )
-        with ffc:
-            st.markdown(wsf.final_feedback)
-        with efc:
-            st.code(wsf.execution_feedback, language="log")
-        with cfc:
-            st.markdown(wsf.code_feedback)
-        with vfc:
-            st.markdown(wsf.value_feedback)
-    elif isinstance(wsf, ModelSingleFeedback):
-        ffc, efc, cfc, msfc, vfc = st.tabs(
-            [
-                "**Final Feedback🏁**",
-                "Execution Feedback🖥️",
-                "Code Feedback📄",
-                "Model Shape Feedback📐",
-                "Value Feedback🔢",
-            ]
-        )
-        with ffc:
-            st.markdown(wsf.final_feedback)
-        with efc:
-            st.code(wsf.execution_feedback, language="log")
-        with cfc:
-            st.markdown(wsf.code_feedback)
-        with msfc:
-            st.markdown(wsf.shape_feedback)
-        with vfc:
-            st.markdown(wsf.value_feedback)
+def evolving_feedback_window(wsf: ModelSingleFeedback):
+    ffc, efc, cfc, msfc, vfc = st.tabs(
+        [
+            "**Final Feedback🏁**",
+            "Execution Feedback🖥️",
+            "Code Feedback📄",
+            "Model Shape Feedback📐",
+            "Value Feedback🔢",
+        ]
+    )
+    with ffc:
+        st.markdown(wsf.final_feedback)
+    with efc:
+        st.code(wsf.execution_feedback, language="log")
+    with cfc:
+        st.markdown(wsf.code_feedback)
+    with msfc:
+        st.markdown(wsf.shape_feedback)
+    with vfc:
+        st.markdown(wsf.value_feedback)
 
 
 def display_hypotheses(hypotheses: dict[int, Hypothesis], decisions: dict[int, bool], success_only: bool = False):
@@ -367,7 +353,7 @@ def display_hypotheses(hypotheses: dict[int, Hypothesis], decisions: dict[int, b
     st.markdown(df.style.apply(style_rows, axis=1).apply(style_columns, axis=0).to_html(), unsafe_allow_html=True)
 
 
-def metrics_window(df: pd.DataFrame, R: int, C: int, *, height: int = 300, colors: list[str] = None):
+def metrics_window(df: pd.DataFrame, R: int, C: int, *, block_size: int = 300, colors: list[str] = None):
     fig = make_subplots(rows=R, cols=C, subplot_titles=df.columns)
 
     def hypothesis_hover_text(h: Hypothesis, d: bool = False):

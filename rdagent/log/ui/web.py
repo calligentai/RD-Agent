@@ -9,7 +9,6 @@ import plotly.express as px
 import streamlit as st
 from streamlit.delta_generator import DeltaGenerator
 
-from rdagent.components.coder.factor_coder.evaluators import FactorSingleFeedback
 from rdagent.components.coder.factor_coder.factor import FactorFBWorkspace, FactorTask
 from rdagent.components.coder.model_coder.evaluators import ModelSingleFeedback
 from rdagent.components.coder.model_coder.model import ModelFBWorkspace, ModelTask
@@ -221,21 +220,19 @@ class ModelTaskWindow(StWindow):
         self.container.table(variables_df)
 
 
-class FactorFeedbackWindow(StWindow):
-    def consume_msg(self, msg: Message | FactorSingleFeedback):
-        fb: FactorSingleFeedback = msg.content if isinstance(msg, Message) else msg
-
+    def consume_msg(self, msg: Message):
+        fb = msg.content if isinstance(msg, Message) else msg
         self.container.markdown(
             f"""### :blue[Factor Execution Feedback]
-{fb.execution_feedback}
+{getattr(fb, 'execution_feedback', '')}
 ### :blue[Factor Code Feedback]
-{fb.code_feedback}
+{getattr(fb, 'code_feedback', '')}
 ### :blue[Factor Value Feedback]
-{fb.value_feedback}
+{getattr(fb, 'value_feedback', '')}
 ### :blue[Factor Final Feedback]
-{fb.final_feedback}
+{getattr(fb, 'final_feedback', '')}
 ### :blue[Factor Final Decision]
-This implementation is {'SUCCESS' if fb.final_decision else 'FAIL'}.
+This implementation is {'SUCCESS' if getattr(fb, 'final_decision', False) else 'FAIL'}.
 """
         )
 
@@ -512,12 +509,8 @@ class EvolvingWindow(StWindow):
                 msg.content = [m for m in msg.content if m]
                 if len(msg.content) == 0:
                     return
-                if isinstance(msg.content[0], FactorSingleFeedback):
-                    self.container.markdown("**Factor Feedbacks🔍**")
-                    ObjectsTabsWindow(
-                        self.container.container(), inner_class=FactorFeedbackWindow, tab_names=self.evolving_tasks
-                    ).consume_msg(msg)
-                elif isinstance(msg.content[0], ModelSingleFeedback):
+                # Removed FactorSingleFeedback handling
+                if isinstance(msg.content[0], ModelSingleFeedback):
                     self.container.markdown("**Model Feedbacks🔍**")
                     ObjectsTabsWindow(
                         self.container.container(), inner_class=ModelFeedbackWindow, tab_names=self.evolving_tasks
