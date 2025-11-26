@@ -46,6 +46,8 @@ webdriver-manager
 # demo related
 streamlit>=1.47  # to support  input_c.text_area(..., height="content", ...)
 plotly
+snowflake-connector-python
+cryptography
 st-theme
 randomname
 flask
